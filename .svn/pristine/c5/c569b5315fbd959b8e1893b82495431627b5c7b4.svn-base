@@ -1,0 +1,81 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@page import="net.main.db.*" %>
+<%@page import="java.util.*" %>
+<%@page import="java.sql.*" %>
+<%
+	ArrayList<scheduleDTO> sbean = (ArrayList<scheduleDTO>)request.getAttribute("schedulelist");
+%>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>등록된 스케줄을 보여주기</title>
+<script type="text/javascript">
+	function mainPage() {
+		var url = "<%= request.getContextPath()%>/MainAction.mo?year=2019&month=5";
+		open(url, "toolbar=no,location=no,status=no,menubar=no,"
+				+ "scrollbars=no,resizable=no,width=400px,height=200");
+	}
+</script>
+</head>
+<body>
+<h2><%= session.getAttribute("id") %>님의 스케줄입니다.</h2>
+  
+	<div>
+		<form action="#" name="scheduleView">
+		<table border="1">
+		<tr>
+			<th>스케줄명</th><th>상세내용</th><th>날짜</th>
+		</tr>
+		
+			
+		
+			<% for(scheduleDTO schedule : sbean) {
+			
+				%>
+				<tr>
+					<td>
+						<%= schedule.getSchedule_Name() %>
+					</td>
+					<td>
+						<%= schedule.getSchedule_memo() %>
+					</td>
+					<td>
+						<%= schedule.getSchedule_day() %>
+					</td>
+				</tr>
+					
+				
+				<!-- out.write("<tr>");
+				out.write("<td>");
+				out.write(schedule.getSchedule_Name());
+				out.write("</td>");
+				out.write("<td>");
+				out.write(schedule.getSchedule_memo());
+				out.write("</td>");
+				out.write("<td>");
+				out.write(schedule.getSchedule_ID());
+				out.write("</td>");
+				out.write("</tr>"); -->
+				
+				
+			<% 
+			}
+			%>
+			
+		<%-- 	<%=session.getAttribute("id") %> --%>
+		</table>
+		</form>
+		</div>
+		
+		
+		<div>
+			<input type="button" name="main" value="메인페이지" onclick="mainPage()">
+		</div>
+		
+	
+</body>
+</html>

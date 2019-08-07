@@ -1,0 +1,20 @@
+insert into SCHEDULE VALUES(	(SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE),'2019년 1회 생산관리 : 품질경영기사','2019-01-25','2019-01-31','2019-03-14','www.q-net.or.kr','합격기원','admin');
+insert into SCHEDULE VALUES(	(SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE),'2019년 1회 디자인 : 컬러리스트기사','2019-01-25','2019-01-31','2019-03-14','www.q-net.or.kr','합격기원','admin');
+insert into SCHEDULE VALUES(	(SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE),'2019년 1회 건축 : 건축기사,건축설비기사,실내건축기사','2019-01-25','2019-01-31','2019-03-14','www.q-net.or.kr','합격기원','admin');
+insert into SCHEDULE VALUES(	(SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE),'2019년 1회 토목 : 건설재료시험기사,지적기사,측량및지형공간정보기사,콘크리트기사,토목기사','2019-01-25','2019-01-31','2019-03-14','www.q-net.or.kr','합격기원','admin');
+insert into SCHEDULE VALUES(	(SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE),'2019년 1회 조경 : 조경기사','2019-01-25','2019-01-31','2019-03-14','www.q-net.or.kr','합격기원','admin');
+insert into SCHEDULE VALUES(	(SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE),'2019년 1회 도시.교통 : 교통기사,도시계획기사','2019-01-25','2019-01-31','2019-03-14','www.q-net.or.kr','합격기원','admin');
+insert into SCHEDULE VALUES(	(SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE),'2019년 1회 채광 : 화약류관리기사','2019-01-25','2019-01-31','2019-03-14','www.q-net.or.kr','합격기원','admin');
+insert into SCHEDULE VALUES(	(SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE),'2019년 1회 기계제작 : 일반기계기사','2019-01-25','2019-01-31','2019-03-14','www.q-net.or.kr','합격기원','admin');
+insert into SCHEDULE VALUES(	(SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE),'2019년 1회 기계장비설비.설치 : 건설기계설비기사,공조냉동기계기사,설비보전기사,승강기기사','2019-01-25','2019-01-31','2019-03-14','www.q-net.or.kr','합격기원','admin');
+insert into SCHEDULE VALUES(	(SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE),'2019년 1회 조선 : 조선기사','2019-01-25','2019-01-31','2019-03-14','www.q-net.or.kr','합격기원','admin');
+insert into SCHEDULE VALUES(	(SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE),'2019년 1회 자동차 : 자동차정비기사','2019-01-25','2019-01-31','2019-03-14','www.q-net.or.kr','합격기원','admin');
+insert into SCHEDULE VALUES(	(SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE),'2019년 1회 용접 : 용접기사','2019-01-25','2019-01-31','2019-03-14','www.q-net.or.kr','합격기원','admin');
+insert into SCHEDULE VALUES(	(SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE),'2019년 1회 화공 : 화공기사,화약류제조기사,화학분석기사','2019-01-25','2019-01-31','2019-03-14','www.q-net.or.kr','합격기원','admin');
+insert into SCHEDULE VALUES(	(SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE),'2019년 1회 전기 : 전기공사기사,전기기사','2019-01-25','2019-01-31','2019-03-14','www.q-net.or.kr','합격기원','admin');
+insert into SCHEDULE VALUES(	(SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE),'2019년 1회 전자 : 의공기사','2019-01-25','2019-01-31','2019-03-14','www.q-net.or.kr','합격기원','admin');
+insert into SCHEDULE VALUES(	(SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE),'2019년 1회 정보기술 : 전자계산기조직응용기사,정보처리기사','2019-01-25','2019-01-31','2019-03-14','www.q-net.or.kr','합격기원','admin');
+insert into SCHEDULE VALUES(	(SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE),'2019년 1회 식품 : 식품기사','2019-01-25','2019-01-31','2019-03-14','www.q-net.or.kr','합격기원','admin');
+insert into SCHEDULE VALUES(	(SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE),'2019년 1회 농업 : 시설원예기사,유기농업기사,종자기사','2019-01-25','2019-01-31','2019-03-14','www.q-net.or.kr','합격기원','admin');
+delete from SCHEDULE
+select * from SCHEDULE;

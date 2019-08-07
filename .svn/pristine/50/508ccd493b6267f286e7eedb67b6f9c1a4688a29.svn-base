@@ -1,0 +1,120 @@
+﻿package net.member.action;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class MemberFrontController extends HttpServlet {
+	public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+		String RequestURI = request.getRequestURI();
+		System.out.println(RequestURI);
+		String contextPath = request.getContextPath();
+		System.out.println(contextPath);
+		String command = RequestURI.substring(contextPath.length());
+		
+		ActionForward forward = null;
+		Action action = null;
+
+		System.out.println("요청명령:" + command);
+		
+		if (command.equals("/MemberJoinAction.lo")) {
+			action = new MemberJoinAction();
+			try {								
+				forward = action.execute(request, response);
+			} catch (Exception e) {				
+				e.printStackTrace();
+			}
+		
+		}
+		else if(command.equals("/MemberLoginAction.lo")) {
+			System.out.println("로그인 액션 진입");
+			action = new MemberLoginAction();						
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+			
+		}
+		else if (command.equals("/MemberJoin.lo")) {
+			System.out.println("요청명령!!!!:" + command);
+			forward = new ActionForward();
+			forward.setPath("./login/loginjoin.jsp");
+		}
+		else if (command.equals("/Memberloginform.lo")) {
+			forward = new ActionForward();
+			forward.setPath("./login/loginform.jsp");
+		}	
+		else if (command.equals("/MemberIDCheck.lo")) {
+			forward = new ActionForward();
+			forward.setPath("./login/loginidchk.jsp");
+		}	
+		else if (command.equals("/MemberLogin.lo")) {
+			forward = new ActionForward();
+			//forward.setRedirect(true);
+			forward.setPath("./login/loginform.jsp");
+		}else if (command.equals("/MemberFind.lo")) {
+			System.out.println("요청명령: " + command);
+			forward = new ActionForward();
+			forward.setPath("/login/loginidpwfind.jsp");
+		}else if (command.equals("/Zipcode.me")) { // 우편번호추가-일수
+			forward = new ActionForward();
+			forward.setPath("./login/loginzipcode.jsp");
+		}else if (command.equals("/MemberZipcodeAction.me")) {
+			action = new MemberZipcodeAction();
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}else if(command.contentEquals("/MemberIDCheckAction.lo")) {
+			System.out.println("아이디체크 진입");
+			action=new MemberIDCheckAction();
+			try {
+				forward=action.execute(request, response);
+			} catch (Exception e) {				
+				e.printStackTrace();
+			}
+		}// 채유진
+		else if(command.contentEquals("/MemberFindAction.lo")) {
+		     System.out.println("아디/비번 찾기");
+		     action=new MemberFindAction();
+		     try {
+				forward=action.execute(request, response);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}}// 채유진
+		else {System.out.println("아직 정의되지 않았습니다!!!!!!!! 체크");}
+		
+		/*
+		 * else if (command.equals("/Schedule.mo")) { forward = new ActionForward();
+		 * forward.setPath("./main/main.jsp");
+		 * 
+		 * }
+		 */
+		//System.out.println(forward.getPath());
+		if (forward != null) {
+			if (forward.isRedirect()) {
+				System.out.println("1");
+				response.sendRedirect(forward.getPath());
+			} else {
+				System.out.println("2");
+				RequestDispatcher dispatcher = request.getRequestDispatcher(forward.getPath());
+				dispatcher.forward(request, response);
+			}
+		}
+		/*
+		else {
+			System.out.println("포워드 널");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("./login/loginform.jsp");
+			dispatcher.forward(request, response);
+			//response.sendRedirect("./login/loginform.jsp");
+		}*/
+	}
+}

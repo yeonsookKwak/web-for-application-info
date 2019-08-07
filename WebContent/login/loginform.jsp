@@ -1,0 +1,117 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Creative - Bootstrap 3 Responsive Admin Template">
+  <meta name="author" content="GeeksLabs">
+  <meta name="keyword" content="Creative, Dashboard, Admin, Template, Theme, Bootstrap, Responsive, Retina, Minimal">
+  <link rel="shortcut icon" href="img/favicon.png">
+
+  <title>Login Page</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="/webproject0510-1/admin/css/bootstrap.min.css" rel="stylesheet">
+  <!-- bootstrap theme -->
+  <link href="/webproject0510-1/admin/css/bootstrap-theme.css" rel="stylesheet">
+  <!--external css-->
+  <!-- font icon -->
+  <link href="/webproject0510-1/admin/css/elegant-icons-style.css" rel="stylesheet" />
+  <link href="/webproject0510-1/admin/css/font-awesome.css" rel="stylesheet" />
+  <!-- Custom styles -->
+  <link href="/webproject0510-1/admin/css/style.css" rel="stylesheet">
+  <link href="/webproject0510-1/admin/css/style-responsive.css" rel="stylesheet" />
+
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 -->
+  <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- =======================================================
+      Theme Name: NiceAdmin
+      Theme URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+      Author: BootstrapMade
+      Author URL: https://bootstrapmade.com
+    ======================================================= -->
+    <style type="text/css">
+li {
+	font-size: 12px;
+}
+</style>
+
+<script>
+	function check() {
+		var id = loginform.MEMBER_ID.value;
+		var pass = loginform.MEMBER_PW.value;
+
+		if (id.length == 0) {
+			alert("아이디를 입력하세요.");
+			loginform.MEMBER_ID.focus();
+			return false;
+		}
+		if (pass.length == 0) {
+			alert("비밀번호를 입력하세요.");
+			loginform.MEMBER_PW.focus();
+			return false;
+		}
+
+		return true;
+	}
+
+	function openConfirmId(loginform) {
+		var url = "./MemberFind.lo";
+		open(url, "confirm", "toolbar=no,location=no,status=no,menubar=no,"
+				+ "scrollbars=no,resizable=no,width=400px,height=200");
+	}
+</script>
+    
+</head>
+
+<body class="login-img3-body">
+
+  <div class="container">
+
+    <form class="login-form" action="./MemberLoginAction.lo" method="post" name="loginform"
+		onsubmit="return check()">
+      <div class="login-wrap">
+        <p class="login-img"><i class="icon_lock_alt"></i></p>
+        <div class="input-group">
+          <span class="input-group-addon"><i class="icon_profile"></i></span>
+          <input type="text" class="form-control" placeholder="Username" autofocus name="MEMBER_ID">
+        </div>
+        <div class="input-group">
+          <span class="input-group-addon"><i class="icon_key_alt"></i></span>
+          <input type="password" class="form-control" placeholder="Password" name="MEMBER_PW">
+        </div>
+        <span class="pull-right"> <a href="#">
+								<li>아이디가 없을 경우 '회원가입'을 클릭하십시오.</li>
+								<li>잊어버렸을 경우 '아이디/비밀번호 찾기'를 클릭하십시오.</li>
+							</a></span>
+        
+        <label class="checkbox">
+                <span class="pull-right"> <a onclick="openConfirmId(this.form)">아이디/비밀번호 찾기</a></span>
+            </label>
+            <br>
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
+        
+      </div>
+    </form>
+    <div class="container">
+    <div class="login-wrap">
+    <button class="btn btn-info btn-lg btn-block" type="submit" onclick="javascript:window.location='./MemberJoin.lo'">Sign up</button>
+    </div>
+    </div>
+    <div class="text-right">
+      <div class="credits">
+     
+        </div>
+    </div>
+  </div>
+
+
+</body>
+
+</html>

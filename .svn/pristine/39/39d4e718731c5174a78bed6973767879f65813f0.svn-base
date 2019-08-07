@@ -1,0 +1,412 @@
+package net.main.db;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Calendar;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.sql.DataSource;
+
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
+
+import net.member.db.ScheduleBean;
+
+public class scheduleDAO {
+
+	DataSource ds;
+	Connection con = null;
+	PreparedStatement pstmt = null;
+	ResultSet rs = null;
+
+	public scheduleDAO() {
+		try {
+			Context initCtx = new InitialContext();
+			Context envCtx = (Context) initCtx.lookup("java:comp/env");
+			ds = (DataSource) envCtx.lookup("jdbc/OracleDB");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public ArrayList<ListBean> mainPageViewData(String id, HttpServletRequest request) {
+		ArrayList<ListBean> arrayList = new ArrayList<ListBean>();
+		int year = Integer.parseInt(request.getParameter("year"));
+		int month = Integer.parseInt(request.getParameter("month"));
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(year, month - 1, 1);
+		/*
+		 * calendar.set(Calendar.YEAR,year); calendar.set(Calendar.MONTH,month-1);
+		 * calendar.set(Calendar.DAY_OF_WEEK, 1);
+		 */
+		int dayofweek = calendar.get(Calendar.DAY_OF_WEEK);
+//			int lastday = 32 - calendar.get(Calendar.DAY_OF_MONTH);
+		int lastday = calendar.getActualMaximum(calendar.DATE);
+		request.setAttribute("dayofweek", dayofweek);
+		request.setAttribute("lastday", lastday);
+		System.out.println(dayofweek + "요일");
+		System.out.println(lastday + "일까지");
+
+		/*
+		 * cal.set(Calendar.YEAR, year1); cal.set(Calendar.MONTH, month1 - 1);
+		 * cal.set(Calendar.DAY_OF_WEEK, 1); int dayofweek =
+		 * cal.get(Calendar.DAY_OF_WEEK); //System.out.println(dayofweek);
+		 * cal.set(Calendar.DAY_OF_MONTH, 32); int lastday = 32 -
+		 * cal.get(Calendar.DAY_OF_MONTH);
+		 */
+
+		try {
+			con = ds.getConnection();
+			// String sql = "Select * from TOTAL_SCHEDULE where member_id =?";
+			//String sql = "Select * from TOTAL_SCHEDULE where MEMBER_ID = ? AND ((sCHEDULE_APP_start_DATE >=to_date(?,'YYYY-MM-DD') and sCHEDULE_APP_end_DATE<to_date(?,'YYYY-MM-DD')) OR ((sCHEDULE_DATE >=to_date(?,'YYYY-MM-DD') and sCHEDULE_DATE<to_date(?,'YYYY-MM-DD')))";
+			String sql = "Select * from TOTAL_SCHEDULE where MEMBER_ID = ? AND ((sCHEDULE_APP_start_DATE >=to_date(?,'YYYY-MM-DD') and sCHEDULE_APP_end_DATE<to_date(?,'YYYY-MM-DD')) OR (sCHEDULE_DAy>=to_date(?,'YYYY-MM-DD') and sCHEDULE_DAy<to_date(?,'YYYY-MM-DD')) )";
+			
+			String month1 = month + 1 + "";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1,id);
+			System.out.println(id);
+			pstmt.setString(2, year + "-" + month + "-01");			
+			pstmt.setString(3, year + "-" + month1 + "-01");
+			pstmt.setString(4, year + "-" + month + "-01");			
+			pstmt.setString(5, year + "-" + month1 + "-01");
+			request.getSession().setAttribute("year", year);
+			request.getSession().setAttribute("month", month);
+			rs = pstmt.executeQuery();
+			ListBean bean;
+
+			if (rs.next()) {
+				while (rs.next()) {
+					
+					if(Integer.parseInt(rs.getString("sCHEDULE_APP_START_DATE").substring(5,7))==month) {
+						int start = Integer.parseInt(rs.getString("sCHEDULE_APP_START_DATE").substring(8,10));
+						int end = Integer.parseInt(rs.getString("sCHEDULE_APP_END_DATE").substring(8,10));
+						System.out.println("start : "+start+"   end : "+end);
+						for(int i = start;i<=end;i++) {
+							bean = new ListBean();
+							// bean.setPosition(position);
+							bean.setDayofweek(dayofweek);
+							bean.setLastday(lastday);
+							bean.setSCHEDULE_NAME(rs.getString("SCHEDULE_NAME"));
+							System.out.println(rs.getString("SCHEDULE_NAME")+"접수");
+							bean.setLIST_RESULT(rs.getString("lIST_RESULT"));
+							bean.setMEMBER_ID(rs.getString("mEMBER_ID"));
+							bean.setSCHEDULE_APP_END_DATE(i+"");
+							bean.setSCHEDULE_APP_START_DATE(i+"");
+							bean.setSCHEDULE_DAY((rs.getString("sCHEDULE_DAY").substring(8, 10)));
+							// System.out.println("sCHEDULE_DAY"+rs.getString("sCHEDULE_DAY").substring(8,10));
+							bean.setSCHEDULE_MEMO(rs.getString("sCHEDULE_MEMO"));
+							bean.setSCHEDULE_REF_SITE(rs.getString("sCHEDULE_REF_SITE"));
+							arrayList.add(bean);
+						}
+						}
+					else{						
+						{
+							bean = new ListBean();
+							// bean.setPosition(position);
+							bean.setDayofweek(dayofweek);
+							bean.setLastday(lastday);
+							bean.setSCHEDULE_NAME(rs.getString("SCHEDULE_NAME")+" 시험");
+							System.out.println(rs.getString("SCHEDULE_NAME"));
+							bean.setLIST_RESULT(rs.getString("lIST_RESULT"));
+							bean.setMEMBER_ID(rs.getString("mEMBER_ID"));
+							bean.setSCHEDULE_APP_END_DATE((rs.getString("sCHEDULE_DAY").substring(8, 10)));
+							bean.setSCHEDULE_APP_START_DATE((rs.getString("sCHEDULE_DAY").substring(8, 10)));
+							bean.setSCHEDULE_DAY((rs.getString("sCHEDULE_DAY").substring(8, 10)));
+							// System.out.println("sCHEDULE_DAY"+rs.getString("sCHEDULE_DAY").substring(8,10));
+							bean.setSCHEDULE_MEMO(rs.getString("sCHEDULE_MEMO"));
+							bean.setSCHEDULE_REF_SITE(rs.getString("sCHEDULE_REF_SITE"));
+							arrayList.add(bean);
+						}
+						}
+					
+					System.out.println("데이타 넘어오나??");
+					System.out.println(lastday);					
+				}
+			} else {
+				System.out.println("값이 없습니다");
+				bean = new ListBean();
+				bean.setDayofweek(dayofweek);
+				bean.setLastday(lastday);
+				bean.setSCHEDULE_NAME("");
+				bean.setLIST_RESULT("");
+				bean.setMEMBER_ID("");
+				bean.setSCHEDULE_APP_END_DATE("0");
+				bean.setSCHEDULE_APP_START_DATE("0");
+				bean.setSCHEDULE_DAY("0");
+				bean.setSCHEDULE_MEMO("");
+				bean.setSCHEDULE_REF_SITE("");
+				arrayList.add(bean);
+				
+			}
+			return arrayList;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	// 2. 서치의 결과를 가져오기
+	public scheduleDTO searchSchedule(String ename) throws Exception {
+		// String sql = "select * from schedule where schedule_name =?"; // 일부 데이터만 받아 올
+		// 수 있게 변경해야함.
+		String sql = "select * from schedule where schedule_name =?";
+		scheduleDTO schedule = null;
+		System.out.println(ename);
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, ename);
+
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				System.out.println(rs.getString("Schedule_name"));
+				schedule = new scheduleDTO();
+
+				schedule.setSchedule_ID(rs.getInt("schedule_ID"));
+				schedule.setSchedule_Name(rs.getString("schedule_name"));
+				schedule.setSchedule_app_start_date(rs.getString("schedule_app_start_date"));
+				schedule.setSchedule_app_end_date(rs.getString("schedule_app_end_date"));
+				schedule.setSchedule_day(rs.getString("schedule_day"));
+				schedule.setSchedule_manager(rs.getString("schedule_manager"));
+				schedule.setSchedule_memo(rs.getString("schedule_memo"));
+				schedule.setSchedule_ref_site(rs.getString("schedule_ref_site"));
+
+			}
+
+			return schedule; // 자바빈 리턴
+
+		} catch (Exception ex) {
+			System.out.println("search 에러 : " + ex);
+		} finally {
+			if (rs != null)
+				try {
+					rs.close();
+				} catch (SQLException ex) {
+				}
+			if (pstmt != null)
+				try {
+					pstmt.close();
+				} catch (SQLException ex) {
+				}
+			if (con != null)
+				try {
+					con.close();
+				} catch (SQLException ex) {
+				}
+		}
+		return null;
+	}
+	// 2.스케줄 등록하기
+
+	public boolean ScheduleAdd(scheduleDTO schedulebean, String id) {
+		
+		int num = 0;
+		String sql = "select max(schedule_ID) from Schedule";
+		int result = 0;
+		
+
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+
+			if (rs.next())
+				num = rs.getInt(1) + 1;
+			else
+				num = 1;
+
+			sql = "insert into SCHEDULE values (?, ?, ?, ?, ?, ?, ?, ?)";
+			//insert into SCHEDULE values ((SELECT NVL(MAX(SCHEDULE_ID),0)+1 FROM SCHEDULE), '시험공부','' , '', '', '', '자바','kin');
+
+			
+			  pstmt = con.prepareStatement(sql); 
+			  pstmt.setInt(1, num); pstmt.setString(2,schedulebean.getSchedule_Name()); 
+			  pstmt.setString(3,schedulebean.getSchedule_day()); 
+			  pstmt.setString(4,schedulebean.getSchedule_day()); 
+			  pstmt.setString(5,  schedulebean.getSchedule_day()); 
+			  pstmt.setString(6, schedulebean.getSchedule_ref_site()); 
+			  pstmt.setString(7, schedulebean.getSchedule_memo()); 
+			  pstmt.setString(8 , schedulebean.getSchedule_manager());
+			 
+			
+			/*
+			 * LIST_ID NUMBER(4) PRIMARY KEY, MEMBER_ID VARCHAR2(20) REFERENCES
+			 * MEMBER(MEMBER_ID), SCHEDULE_ID number REFERENCES SCHEDULE(SCHEDULE_ID),
+			 * LIST_RESULT NUMBER(2)
+			 */
+
+			result = pstmt.executeUpdate();
+			  
+			  //스케줄 리스트에 등록하기 
+			int num2 = 0;
+			sql = "select max(List_ID)from schedule_list ";
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			if(rs.next() ) 
+				num2 = rs.getInt(1) + 1;
+				else
+					num2 = 1;
+			
+			sql = "insert into schedule_list values (?,?,?,0)";
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, num2);
+			pstmt.setString(2, id );
+			pstmt.setInt(3, num);
+		
+			pstmt.executeUpdate();
+			
+			
+			if (result == 0)
+				return false;
+			return true;
+		} catch (Exception ex) {
+			System.out.println("스케줄 등록 에러 : " + ex);
+		} finally {
+			if (rs != null)
+				try {
+					rs.close();
+				} catch (SQLException ex) {
+				}
+			if (pstmt != null)
+				try {
+					pstmt.close();
+				} catch (SQLException ex) {
+				}
+			if (con != null)
+				try {
+					con.close();
+				} catch (SQLException ex) {
+				}
+		}
+		return false;
+	}
+	
+	// 3.스케줄 등록해서 view 페이지에 보여줌.
+	public  ArrayList<scheduleDTO> getschedule (String id) {
+		ArrayList<scheduleDTO> scheduleList = new ArrayList<scheduleDTO>();
+		scheduleDTO schedule = null;
+		System.out.println("스케줄 리스트");
+		try {
+		String sql = "select * from total_schedule where member_ID=?";
+		con= ds.getConnection();
+		pstmt = con.prepareStatement(sql);
+	    pstmt.setString(1,id);
+		rs= pstmt.executeQuery();
+		if(rs.next()) {
+		while(rs.next()) {
+			schedule = new scheduleDTO();
+		//schedule.setSchedule_ID(rs.getInt("schedule_ID"));// 값이 안넘어옴./
+		schedule.setSchedule_Name(rs.getString("schedule_Name"));
+		schedule.setSchedule_day(rs.getString("schedule_day"));
+		schedule.setSchedule_memo(rs.getString("schedule_memo"));
+		//schedule.setSchedule_manager(rs.getString("schedule_manager"));
+		schedule.setSchedule_ref_site(rs.getString("schedule_ref_site"));
+		scheduleList.add(schedule);
+		System.out.println("값있음");
+		}}
+		else {System.out.println("값이 없다");}
+		return scheduleList;
+	} catch (Exception e) {
+		
+	} finally { 
+		
+		try {
+		if(pstmt !=null) {
+			pstmt.close();
+			pstmt=null;
+		}
+		if(con!=null) {
+			con.close();
+			con=null;
+		}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+		return null;
+		
+	}
+	/*
+	 * public boolean ScheduleAdd(scheduleDTO schedulebean) { int num = 0; String
+	 * sql = "select max(schedule_ID) from Schedule"; int result = 0;
+	 * 
+	 * try { con = ds.getConnection(); pstmt = con.prepareStatement(sql); rs =
+	 * pstmt.executeQuery();
+	 * 
+	 * if (rs.next()) num = rs.getInt(1) + 1; else num = 1;
+	 * 
+	 * sql = "insert into Schedule values (?,?,?,?,?,?,?,?)";
+	 * 
+	 * pstmt = con.prepareStatement(sql); pstmt.setInt(1, num); pstmt.setString(2,
+	 * schedulebean.getSchedule_Name()); pstmt.setString(3,
+	 * schedulebean.getSchedule_app_start_date()); pstmt.setString(4,
+	 * schedulebean.getSchedule_app_end_date()); pstmt.setString(5,
+	 * schedulebean.getSchedule_day()); pstmt.setString(6,
+	 * schedulebean.getSchedule_ref_site()); pstmt.setString(7,
+	 * schedulebean.getSchedule_memo()); pstmt.setString(8,
+	 * schedulebean.getSchedule_manager());
+	 * 
+	 * result = pstmt.executeUpdate();
+	 * 
+	 * if (result == 0) return false; return true; } catch (Exception ex) {
+	 * System.out.println("스케줄 등록 에러 : " + ex); } finally { if (rs != null) try {
+	 * rs.close(); } catch (SQLException ex) { } if (pstmt != null) try {
+	 * pstmt.close(); } catch (SQLException ex) { } if (con != null) try {
+	 * con.close(); } catch (SQLException ex) { } } return false; }
+	 */
+	// 3. 등록한 스케줄 보여지기
+	public scheduleDTO ScheduleView() throws Exception {
+
+		String sql = "select * from total_schedule where member_ID=?";
+
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(sql);
+			//pstmt.setString(1, id);
+			// pstmt.setObject(1, sdto);
+
+			rs = pstmt.executeQuery();
+			scheduleDTO sdto = null;
+			
+			if (rs.next()) {
+				sdto = new scheduleDTO();
+				sdto.setSchedule_ID(rs.getInt("schedule_ID"));
+				sdto.setSchedule_Name(rs.getString("schedule_name"));
+				sdto.setSchedule_memo(rs.getString("schedule_memo"));
+
+				System.out.println("데이터를 가져옴.");
+
+			}
+			return sdto;
+
+		} catch (Exception ex) {
+			System.out.println("보기 에러 : " + ex);
+		} finally {
+			if (rs != null)
+				try {
+					rs.close();
+				} catch (SQLException ex) {
+				}
+			if (pstmt != null)
+				try {
+					pstmt.close();
+				} catch (SQLException ex) {
+				}
+			if (con != null)
+				try {
+					con.close();
+				} catch (SQLException ex) {
+				}
+		}
+		return null;
+
+	}
+
+}

@@ -1,0 +1,248 @@
+<%@page import="java.util.Date"%>
+<%@page import="java.time.Year"%>
+<%@page import="java.util.Calendar"%>
+<%@page import="net.main.db.ListBean"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="org.apache.jasper.tagplugins.jstl.core.ForEach"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+td {
+	width: 70px;
+	height: 80px
+}
+ 
+</style>
+
+<script type="text/javascript">
+	function scheduleWrite() {
+		var url = "<%= request.getContextPath()%>/m_ScheduleModifyAction.mo";
+		open(url, "toolbar=no,location=no,status=no,menubar=no,"
+				+ "scrollbars=no,resizable=no,width=400px,height=200");
+	}
+
+</script>
+
+<script src="https://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		//Radio button init
+		$('input:radio[id=close]').prop("checked", true);
+
+		//Radio button event
+		$('input:radio[name=curtain]').change(function() {
+			if ($(this).val() == "open") { //Curtain on
+				var maskHeight = $(document).height();
+				var maskWidth = $(window).width();
+
+				$('.tutorialCurtain').css({
+					'width' : maskWidth,
+					'height' : maskHeight
+				});
+				$('.tutorialCurtain').fadeIn(100,function(){
+					$('#lala').fadeIn(100);
+				});
+				
+				/* $('.tutorialCurtain').fadeTo("slow",0.4);	
+				$('#lala').fadeIn(100);	 */
+			} else if ($(this).val() == "close") { //Curtain off
+				$('.tutorialCurtain').css({
+					'width' : 0,
+					'height' : 0
+				});
+				$('.tutorialCurtain').fadeOut();
+				$('#lala').fadeOut(100);	
+			}
+		});
+	});
+	
+	/* $(function(){
+    	$('.tutorialCurtain').click(function(){
+    		$('.tutorialCurtain').append('<span>안녕</span>');
+    	})
+    }); */
+	
+</script>
+
+<style type="text/css">
+		.tutorialCurtain {  
+			position:absolute;  
+			left:0;
+			top:0;
+			z-index:9;  
+			background-color:#000;  
+			display:none;  
+			opacity:0.4;
+		}
+		
+		.tutorialView{
+			z-index:10;
+			position:relative;
+			background-color:#FFF;
+		}
+		
+		.tutorialView2{
+			z-index:10;
+			position:relative;
+			background-color:#FFF;
+			width:30%;
+		}
+		
+		.tutorialView3{
+			z-index:10;
+			position:relative;
+			background-color:#FFF;
+			width:48%;
+		}
+		
+		.text{
+		   color:orange;
+		   position:relative;
+		}
+		
+		#lala{display:none; position:relative; top:75px; left:310px;}
+		
+</style>
+	
+
+</head>
+<body>
+<span class="tutorialView"> 
+	    <input type="radio" name="curtain" id="open" value="open">
+	        <label for="open">Tutorial on</label> 
+		<input type="radio" name="curtain" id="close" value="close">
+		    <label for="close">Tutorial off</label>
+</span>
+
+<br>
+<br>
+<div class="tutorialCurtain">
+  <span style="color:skyblue" id="lala">←  1. 찾고자 하는 일정을 검색해주세요.
+  <br><br><br><br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↑  2. 원하는 날짜를 검색해주세요.
+  &nbsp; &nbsp; &nbsp;&nbsp;
+  ↓3. 등록한 스케줄을 확인해주세요.
+  </span>
+</div>
+
+		
+	<input class="tutorialView2" type="button" value="스케줄 등록" onclick="scheduleWrite()">
+
+	<form class="tutorialView2" action="<%= request.getContextPath()%>/ScheduleSearchAction.mo" name="searchForm">
+		<input type="text" name="search">
+		<input type="submit" name="searchb" value="검색하기" > 
+	</form> 
+	<br>
+	<hr>
+	
+	<table border="1" width=100%>
+	</table>
+		
+	<form class="tutorialView3" action="./MainAction.mo">
+	<input type="text" name="year" value="<%=session.getAttribute("year")%>">년
+	<input type="text" name="month" value="<%=session.getAttribute("month")%>">월
+	<input type="submit" value="달력검색">
+	</form>
+	
+	<br>
+	<table class="tutorialView"  border="1" width=100%>
+		<tr>
+			<th>일</th>
+			<th>월</th>
+			<th>화</th>
+			<th>수</th>
+			<th>목</th>
+			<th>금</th>
+			<th>토</th>
+		</tr>
+		<%			
+		//out.write(""+session.getAttribute("year"));
+			//out.write((String)session.getAttribute("month"));
+			ArrayList<ListBean> arrayList = (ArrayList) request.getAttribute("arrayList");
+			int dayofweek = 0;
+			int lastday = 0;
+			boolean isFirst = true;
+			for (ListBean bean : arrayList) {
+				if (isFirst) {
+					dayofweek = bean.getDayofweek();
+					lastday = bean.getLastday();
+					//out.write(dayofweek+""+lastday);
+				}
+			}
+			for (int i = 1; i <= 42; i++) {
+				if (i % 7 == 1) {
+					out.write("<tr><td>");
+					String dupl="";
+					if ((i - dayofweek + 1) > 0 && (i - dayofweek + 1) <= lastday) {
+					out.write("<h5>");
+					{
+						out.write((i - dayofweek + 1) + "");
+					}
+					out.write("</h5>");
+
+					for (ListBean bean : arrayList) {
+						if (Integer.parseInt(bean.getSCHEDULE_APP_START_DATE()) <= (i - dayofweek + 1)
+								&& Integer.parseInt(bean.getSCHEDULE_APP_END_DATE()) >= (i - dayofweek + 1)) {
+							if(dupl.equals(bean.getSCHEDULE_NAME())){}
+							else{out.write(bean.getSCHEDULE_NAME() + "<br>");}
+							dupl=bean.getSCHEDULE_NAME();
+						}
+					}}
+					out.write("</td>");
+				} else if (i % 7 == 0) {
+					{
+						out.write("<td>");
+						String dupl="";
+						if ((i - dayofweek + 1) > 0 && (i - dayofweek + 1) <= lastday) {
+						out.write("<h5>");
+						if ((i - dayofweek + 1) > 0) {
+							out.write((i - dayofweek + 1) + "");
+						}
+						out.write("</h5>");
+						
+
+						for (ListBean bean : arrayList) {
+							if (Integer.parseInt(bean.getSCHEDULE_APP_START_DATE()) <= (i - dayofweek + 1)
+									&& Integer.parseInt(bean.getSCHEDULE_APP_END_DATE()) >= (i - dayofweek + 1)) {
+								if(dupl.equals(bean.getSCHEDULE_NAME())){}
+								else{	out.write(bean.getSCHEDULE_NAME() + "<br>");}
+								dupl=bean.getSCHEDULE_NAME();
+							}
+						}}
+						out.write("</td>");
+						out.write("</tr>");
+					}
+				} else {
+					{
+						out.write("<td>");
+						String dupl="";
+						if ((i - dayofweek + 1) > 0 && (i - dayofweek + 1) <= lastday) {
+							out.write("<h5>");
+
+							out.write((i - dayofweek + 1) + "");
+						}
+						out.write("</h5>");
+						for (ListBean bean : arrayList) {
+							if (Integer.parseInt(bean.getSCHEDULE_APP_START_DATE()) <= (i - dayofweek + 1)
+									&& Integer.parseInt(bean.getSCHEDULE_APP_END_DATE()) >= (i - dayofweek + 1)) {
+								if(dupl.equals(bean.getSCHEDULE_NAME())){}
+								else{out.write(bean.getSCHEDULE_NAME() + "<br>");}
+								dupl=bean.getSCHEDULE_NAME();
+							}
+						}
+					}
+					out.write("</td>");
+				}
+			}
+		%>
+
+	</table>
+<form action="./MemberLogin.lo">
+<input type="submit" value="로그아웃">
+</body>
+</html>
